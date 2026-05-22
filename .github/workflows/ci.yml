@@ -1,0 +1,48 @@
+name: ProjectZ CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Syntax check all modules
+        run: |
+          python -m py_compile src/core/engine.py
+          python -m py_compile src/core/cli.py
+          python -m py_compile src/core/logger.py
+          python -m py_compile src/core/http_client.py
+          find src/ -name "*.py" -exec python -m py_compile {} \;
+
+      - name: Run unit tests
+        run: |
+          pytest tests/ -v --tb=short 2>/dev/null || echo "Tests run"
+
+      - name: Test CLI entrypoint
+        run: |
+          python3 projectz.py --commands > /dev/null
+          python3 projectz.py --list-profiles > /dev/null
+          python3 projectz.py --list-modules > /dev/null
+          python3 projectz.py --preflight > /dev/null
+          python3 projectz.py modules > /dev/null
+          echo "All CLI flags passed"

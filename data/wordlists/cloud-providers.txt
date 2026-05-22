@@ -1,0 +1,40 @@
+# ProjectZ - Cloud Provider IP/Domain Patterns
+# AWS
+amazonaws.com
+cloudfront.net
+s3.amazonaws.com
+execute-api.amazonaws.com
+elb.amazonaws.com
+elasticbeanstalk.com
+awsglobalaccelerator.com
+# GCP
+googleapis.com
+googleusercontent.com
+appspot.com
+cloudfunctions.net
+run.app
+# Azure
+azure.com
+azurewebsites.net
+cloudapp.azure.com
+trafficmanager.net
+azure-api.net
+azureedge.net
+# Cloudflare
+cloudflare.com
+cloudflare-ipfs.com
+pages.dev
+workers.dev
+# Fastly
+fastly.net
+fastlylb.net
+# Akamai
+akamai.net
+akamaiedge.net
+akamaitechnologies.com
+# DigitalOcean
+digitalocean.com
+ondigitalocean.app
+# Heroku
+heroku.com
+herokuapp.com

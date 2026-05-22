@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ProjectZ Intelligence Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+:root {
+  --navy: #0a0f1e;
+  --navy2: #0f1628;
+  --navy3: #141d35;
+  --gold: #c9a84c;
+  --gold2: #e2c06a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --gold-glow: rgba(201,168,76,0.08);
+  --cyan: #7dd3fc;
+  --green: #6ee7b7;
+  --warn: #fbbf24;
+  --err: #f87171;
+  --dim: #3d4f6e;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --border: rgba(201,168,76,0.18);
+  --border2: rgba(255,255,255,0.06);
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── Animated background ── */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-canvas canvas { width: 100%; height: 100%; }
+
+.bg-grad {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(201,168,76,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(125,211,252,0.05) 0%, transparent 55%),
+    var(--navy);
+}
+
+/* ── Theme switcher ── */
+.theme-bar {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 100;
+  display: flex;
+  gap: 6px;
+}
+.theme-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform .2s, border-color .2s;
+}
+.theme-dot:hover { transform: scale(1.2); }
+.theme-dot.active { border-color: white; }
+.td-navy  { background: #0a0f1e; }
+.td-slate { background: #1e293b; }
+.td-forest{ background: #0d1f15; }
+.td-wine  { background: #1a0a14; }
+
+/* ── Layout ── */
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 52px 16px 36px;
+}
+
+.logo-ring {
+  width: 80px; height: 80px;
+  margin: 0 auto 20px;
+  position: relative;
+}
+.logo-ring svg {
+  position: absolute;
+  inset: 0;
+  animation: spin 12s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.logo-inner {
+  position: absolute;
+  inset: 10px;
+  background: linear-gradient(135deg, var(--navy3), var(--navy2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--gold);
+  border: 1px solid var(--border);
+}
+
+.wolf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  margin-bottom: 18px;
+  letter-spacing: .04em;
+}
+
+.hero-title {
+  font-size: clamp(22px, 5vw, 34px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #fff 30%, var(--gold2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 22px;
+  line-height: 1.6;
+}
+
+.pills {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid;
+  letter-spacing: .03em;
+}
+.pi { background: rgba(125,211,252,.1); color: #7dd3fc; border-color: rgba(125,211,252,.3); }
+.pg { background: rgba(110,231,183,.1); color: #6ee7b7; border-color: rgba(110,231,183,.3); }
+.pw { background: rgba(251,191,36,.1);  color: #fbbf24; border-color: rgba(251,191,36,.3); }
+.pr { background: rgba(248,113,113,.1); color: #f87171; border-color: rgba(248,113,113,.3); }
+
+/* ── Stats ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: linear-gradient(135deg, var(--navy3), var(--navy2));
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 14px 10px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.stat-card:hover { border-color: var(--border); transform: translateY(-2px); }
+.stat-card:hover::before { opacity: 1; }
+.stat-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--gold2);
+  font-family: 'Space Mono', monospace;
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+/* ── Section headers ── */
+.sec {
+  margin-bottom: 28px;
+}
+.sec-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.sec-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.sec-hint {
+  font-size: 10px;
+  color: var(--dim);
+  font-weight: 400;
+}
+
+/* ── Category grid ── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.cat {
+  background: var(--navy2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 10px;
+  cursor: pointer;
+  transition: all .18s;
+  position: relative;
+  overflow: hidden;
+}
+.cat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--gold-glow), transparent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.cat:hover { border-color: var(--border); transform: translateY(-1px); }
+.cat:hover::after { opacity: 1; }
+.cat.sel {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(201,168,76,0.12), var(--navy2));
+}
+.cat.sel::after { opacity: 1; }
+.cat-icon {
+  font-size: 18px;
+  color: var(--text3);
+  margin-bottom: 7px;
+  transition: color .2s;
+}
+.cat:hover .cat-icon, .cat.sel .cat-icon { color: var(--gold); }
+.cat-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.cat.sel .cat-name { color: var(--gold2); }
+.cat-sub {
+  font-size: 10px;
+  color: var(--text3);
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── Module chips panel ── */
+.mod-panel {
+  background: var(--navy3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-top: 8px;
+  animation: fadeIn .15s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+.mp-title {
+  font-size: 10px;
+  color: var(--text3);
+  margin-bottom: 9px;
+  font-style: italic;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  transition: all .14s;
+  background: var(--navy2);
+}
+.chip:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.chip.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+/* ── Terminal ── */
+.term-wrap {
+  background: #080d1a;
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.term-bar {
+  background: #0d1424;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.td { width: 10px; height: 10px; border-radius: 50%; }
+.td-r { background: #ff5f57; }
+.td-y { background: #febc2e; }
+.td-g { background: #28c840; }
+.term-lbl {
+  font-size: 10px;
+  color: var(--dim);
+  margin-left: 6px;
+  font-family: 'Space Mono', monospace;
+  flex: 1;
+}
+.term-live {
+  font-size: 9px;
+  color: var(--green);
+  font-family: 'Space Mono', monospace;
+  background: rgba(110,231,183,.1);
+  border: 1px solid rgba(110,231,183,.2);
+  border-radius: 10px;
+  padding: 2px 7px;
+}
+.term-body {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  line-height: 1.75;
+  padding: 14px 16px;
+  min-height: 140px;
+  overflow: hidden;
+}
+.tl { display: flex; gap: 5px; }
+.t-p  { color: var(--gold); flex-shrink: 0; }
+.t-c  { color: var(--cyan); }
+.t-ok   { color: var(--green); }
+.t-warn { color: var(--warn); }
+.t-err  { color: var(--err); }
+.t-dim  { color: var(--dim); font-size: 11px; }
+.cur {
+  display: inline-block;
+  width: 7px; height: 13px;
+  background: var(--cyan);
+  vertical-align: -2px;
+  animation: blink .85s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── Nations ── */
+.nations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.nation {
+  background: var(--navy2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 11px 12px;
+  transition: border-color .2s, transform .2s;
+}
+.nation:hover { border-color: var(--border); transform: translateY(-2px); }
+.nflag { font-size: 20px; margin-bottom: 6px; }
+.nname { font-size: 11px; font-weight: 700; color: var(--text); }
+.nagency { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.nfeed {
+  font-size: 9px;
+  color: var(--green);
+  margin-top: 5px;
+  font-family: 'Space Mono', monospace;
+  background: rgba(110,231,183,.08);
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(110,231,183,.15);
+}
+
+/* ── Profiles ── */
+.prof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.prof {
+  background: var(--navy2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  cursor: pointer;
+  transition: all .18s;
+  position: relative;
+  overflow: hidden;
+}
+.prof:hover { border-color: var(--border); transform: translateY(-1px); }
+.prof.sel {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(201,168,76,.1), var(--navy2));
+}
+.prof-name {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+  color: var(--text2);
+  margin-bottom: 3px;
+}
+.prof.sel .prof-name { color: var(--gold); }
+.prof-desc { font-size: 10px; color: var(--text3); }
+.prof-n {
+  font-size: 9px;
+  color: var(--dim);
+  margin-top: 4px;
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── Command builder ── */
+.builder {
+  background: var(--navy3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.builder-head {
+  background: var(--navy2);
+  border-bottom: 1px solid var(--border2);
+  padding: 10px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.builder-head i { color: var(--gold); }
+.builder-body { padding: 14px 16px; }
+.brow {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.blbl {
+  font-size: 10px;
+  color: var(--text3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+select {
+  font-size: 12px;
+  font-family: 'Space Mono', monospace;
+  width: 100%;
+  background: var(--navy2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  padding: 6px 10px;
+  outline: none;
+  transition: border-color .15s;
+  cursor: pointer;
+}
+select:focus { border-color: var(--gold); }
+
+.cmd-out {
+  background: #060b14;
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+.cmd-text { word-break: break-all; flex: 1; line-height: 1.6; }
+.cp-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 10px;
+  font-family: 'Space Mono', monospace;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.cp-btn:hover { background: var(--gold-dim); }
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding: 32px 16px 0;
+  border-top: 1px solid var(--border2);
+  margin-top: 36px;
+}
+.footer-wolf { font-size: 26px; margin-bottom: 8px; }
+.footer-txt {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'Space Mono', monospace;
+}
+.footer-txt a { color: var(--gold); text-decoration: none; }
+.footer-txt a:hover { text-decoration: underline; }
+
+/* ── Theme variants ── */
+body.theme-slate {
+  --navy: #0f172a;
+  --navy2: #1e293b;
+  --navy3: #263048;
+  --gold: #818cf8;
+  --gold2: #a5b4fc;
+  --gold-dim: rgba(129,140,248,0.15);
+  --gold-glow: rgba(129,140,248,0.08);
+  --border: rgba(129,140,248,0.25);
+}
+body.theme-forest {
+  --navy: #071310;
+  --navy2: #0d1f18;
+  --navy3: #132b20;
+  --gold: #34d399;
+  --gold2: #6ee7b7;
+  --gold-dim: rgba(52,211,153,0.15);
+  --gold-glow: rgba(52,211,153,0.08);
+  --border: rgba(52,211,153,0.25);
+}
+body.theme-wine {
+  --navy: #120710;
+  --navy2: #1c0e1a;
+  --navy3: #281524;
+  --gold: #f472b6;
+  --gold2: #fbcfe8;
+  --gold-dim: rgba(244,114,182,0.15);
+  --gold-glow: rgba(244,114,182,0.08);
+  --border: rgba(244,114,182,0.25);
+}
+
+@media (max-width: 520px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-grad"></div>
+<canvas id="bg-canvas" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.35"></canvas>
+
+<!-- Theme switcher -->
+<div class="theme-bar">
+  <div class="theme-dot td-navy active"  onclick="setTheme('')"      title="Dark Navy"></div>
+  <div class="theme-dot td-slate"        onclick="setTheme('slate')" title="Slate Blue"></div>
+  <div class="theme-dot td-forest"       onclick="setTheme('forest')"title="Forest"></div>
+  <div class="theme-dot td-wine"         onclick="setTheme('wine')"  title="Wine"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="logo-ring">
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="37" stroke="rgba(201,168,76,0.3)" stroke-width="1" stroke-dasharray="4 6"/>
+      </svg>
+      <div class="logo-inner">🐺</div>
+    </div>
+    <div class="wolf-badge"><span>●</span> v1.0 — cyberhowler</div>
+    <div class="hero-title">ProjectZ Intelligence<br>Framework</div>
+    <div class="hero-sub">OSINT &amp; Recon — 56 modules · 14 profiles · 6-nation govt threat intel</div>
+    <div class="pills">
+      <span class="pill pi">Python 3.10+</span>
+      <span class="pill pg">56 modules</span>
+      <span class="pill pw">14 profiles</span>
+      <span class="pill pr">MIT license</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">56</div><div class="stat-lbl">Modules</div></div>
+    <div class="stat-card"><div class="stat-num">14</div><div class="stat-lbl">Profiles</div></div>
+    <div class="stat-card"><div class="stat-num">35+</div><div class="stat-lbl">API keys</div></div>
+    <div class="stat-card"><div class="stat-num">80+</div><div class="stat-lbl">Commands</div></div>
+  </div>
+
+  <!-- Categories -->
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-title">Module categories</span>
+      <span class="sec-hint">click to explore</span>
+    </div>
+    <div class="cat-grid" id="cat-grid"></div>
+    <div class="mod-panel" id="mod-panel" style="display:none">
+      <div class="mp-title" id="mp-title"></div>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+
+  <!-- Terminal -->
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-title">Terminal</span>
+      <span class="term-live">● live demo</span>
+    </div>
+    <div class="term-wrap">
+      <div class="term-bar">
+        <div class="td td-r"></div>
+        <div class="td td-y"></div>
+        <div class="td td-g"></div>
+        <span class="term-lbl" id="term-lbl">projectz — bash</span>
+      </div>
+      <div class="term-body" id="term-body"></div>
+    </div>
+  </div>
+
+  <!-- Nations -->
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-title">6-nation govt intelligence</span>
+      <span class="sec-hint">all free · no keys</span>
+    </div>
+    <div class="nations-grid" id="nations-grid"></div>
+  </div>
+
+  <!-- Profiles -->
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-title">Scan profiles</span>
+      <span class="sec-hint">click to use</span>
+    </div>
+    <div class="prof-grid" id="prof-grid"></div>
+  </div>
+
+  <!-- Command builder -->
+  <div class="sec">
+    <div class="builder">
+      <div class="builder-head">
+        <i class="ti ti-terminal-2"></i> Command builder
+      </div>
+      <div class="builder-body">
+        <div class="brow">
+          <span class="blbl">Target</span>
+          <select id="sel-t" onchange="build()">
+            <option value="example.com">example.com</option>
+            <option value="8.8.8.8">8.8.8.8 (IP)</option>
+            <option value="admin@example.com">admin@example.com</option>
+            <option value="@username">@username</option>
+            <option value="apache">apache (vendor)</option>
+          </select>
+        </div>
+        <div class="brow">
+          <span class="blbl">Module</span>
+          <select id="sel-m" onchange="build()">
+            <optgroup label="Quick"><option value="quick">quick</option><option value="full">full</option></optgroup>
+            <optgroup label="Domain"><option>whois</option><option>dns</option><option>ssl</option><option>tech</option><option>spfdmarc</option><option>subdomains</option><option>asn</option><option>hosting</option><option>reverseip</option><option>headers</option><option>cors</option><option>cms</option></optgroup>
+            <optgroup label="People"><option>emails</option><option>phones</option><option>linkedin</option><option>twitter</option><option>github</option><option>usernames</option><option>breach</option><option>employees</option></optgroup>
+            <optgroup label="Network"><option>geo</option><option>portscan</option><option>masscan</option><option>banner</option><option>iprep</option><option>shodan</option><option>censys</option><option>zoomeye</option><option>waf</option></optgroup>
+            <optgroup label="Dorking"><option>admin</option><option>files</option><option>errors</option><option>creds</option><option>vulns</option><option>dirbust</option></optgroup>
+            <optgroup label="Harvesting"><option>google</option><option>bing</option><option>crtsh</option><option>dnsdump</option><option>histdns</option><option>leaks</option><option>hunter</option><option>s3buckets</option></optgroup>
+            <optgroup label="Cybersec"><option>fiveeyes</option><option>virustotal</option><option>urlscan</option><option>hibp</option><option>otx</option><option>abuseipdb</option><option>urlhaus</option><option>exploitdb</option><option>pastebin</option><option>intelx</option><option>yara</option><option>threatcrowd</option><option>packetstorm</option></optgroup>
+          </select>
+        </div>
+        <div class="brow">
+          <span class="blbl">Profile</span>
+          <select id="sel-p" onchange="profPick()">
+            <option value="">none</option>
+            <option>quick</option><option>full</option><option>pentest</option><option>red_team</option>
+            <option>bug_bounty</option><option>passive_recon</option><option>web_audit</option>
+            <option>social_eng</option><option>osint</option><option>threat_intel</option>
+            <option>quick_ip</option><option>domain</option><option>recon</option>
+          </select>
+        </div>
+        <div class="brow">
+          <span class="blbl">Output</span>
+          <select id="sel-o" onchange="build()">
+            <option value="">json (default)</option>
+            <option value="-f html -o report.html">HTML report</option>
+            <option value="-f csv">CSV</option>
+            <option value="-f txt">TXT</option>
+          </select>
+        </div>
+        <div class="brow">
+          <span class="blbl">Flags</span>
+          <select id="sel-f" onchange="build()">
+            <option value="">none</option>
+            <option value="--no-cache">--no-cache</option>
+            <option value="--verbose">--verbose</option>
+            <option value="--workers 20">--workers 20</option>
+            <option value="--watch 6">--watch 6</option>
+            <option value="--workers 3 --timeout 30 --no-cache">stealth mode</option>
+            <option value="--no-concurrent -v --no-cache">debug mode</option>
+          </select>
+        </div>
+        <div class="cmd-out">
+          <span class="cmd-text" id="cmd-out">python3 projectz.py example.com quick</span>
+          <button class="cp-btn" onclick="cp(this)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-wolf">🐺</div>
+    <div class="footer-txt">
+      built by <a href="https://github.com/cyberhowler/projectZ" target="_blank">cyberhowler</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/cyberhowler/projectZ" target="_blank">github ↗</a>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ── Particle background ── */
+(function(){
+  const c=document.getElementById('bg-canvas');
+  const ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<55;i++) pts.push({x:Math.random()*1400,y:Math.random()*900,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*1.2+.3});
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;
+      if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(201,168,76,0.6)';ctx.fill();
+    });
+    pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<130){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(201,168,76,${.12*(1-d/130)})`;ctx.lineWidth=.6;ctx.stroke();}
+    }));
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ── Theme switcher ── */
+function setTheme(t){
+  document.body.className=t?'theme-'+t:'';
+  document.querySelectorAll('.theme-dot').forEach(d=>d.classList.remove('active'));
+  const idx={'':0,slate:1,forest:2,wine:3}[t];
+  document.querySelectorAll('.theme-dot')[idx].classList.add('active');
+}
+
+/* ── Data ── */
+const CATS=[
+  {icon:"ti-world",name:"Domain",sub:"12 modules",mods:["whois","dns","ssl","tech","spfdmarc","subdomains","asn","hosting","reverseip","headers","cors","cms"]},
+  {icon:"ti-users",name:"People",sub:"8 modules",mods:["emails","phones","linkedin","twitter","github","usernames","breach","employees"]},
+  {icon:"ti-topology-star-2",name:"Network",sub:"9 modules",mods:["geo","portscan","masscan","banner","iprep","shodan","censys","zoomeye","waf"]},
+  {icon:"ti-search",name:"Dorking",sub:"6 modules",mods:["admin","files","errors","creds","vulns","dirbust"]},
+  {icon:"ti-database",name:"Harvest",sub:"8 modules",mods:["google","bing","crtsh","dnsdump","histdns","leaks","hunter","s3buckets"]},
+  {icon:"ti-shield-check",name:"Cybersec",sub:"13 modules",mods:["fiveeyes","virustotal","urlscan","hibp","otx","abuseipdb","urlhaus","exploitdb","pastebin","intelx","yara","threatcrowd","packetstorm"]},
+];
+const NATIONS=[
+  {flag:"🇺🇸",name:"USA",agency:"CISA",feed:"KEV catalog"},
+  {flag:"🇬🇧",name:"UK",agency:"NCSC",feed:"Advisory RSS"},
+  {flag:"🇨🇦",name:"Canada",agency:"CCCS",feed:"Alert RSS"},
+  {flag:"🇦🇺",name:"Australia",agency:"ACSC",feed:"Advisory RSS"},
+  {flag:"🇳🇿",name:"NZ",agency:"NCSC-NZ",feed:"Advisory RSS"},
+  {flag:"🇮🇳",name:"India",agency:"CERT-In",feed:"Vuln notes + alerts"},
+];
+const PROFILES=[
+  {n:"quick",d:"Fast surface scan",m:9},{n:"full",d:"All 56 modules",m:56},
+  {n:"pentest",d:"Authorised pentest",m:28},{n:"red_team",d:"Red team mapping",m:38},
+  {n:"bug_bounty",d:"Bug bounty hunting",m:22},{n:"passive_recon",d:"Zero target contact",m:20},
+  {n:"web_audit",d:"Web security audit",m:14},{n:"social_eng",d:"People intelligence",m:12},
+  {n:"osint",d:"Open source intel",m:9},{n:"threat_intel",d:"Threat intel feeds",m:10},
+  {n:"quick_ip",d:"Fast IP analysis",m:6},{n:"domain",d:"Domain deep dive",m:12},
+  {n:"recon",d:"Classic recon",m:11},
+];
+const DEMOS=[
+  {lbl:"quick scan",cmd:"python3 projectz.py example.com quick --no-cache",lines:[
+    {c:"t-ok",t:"[*] ProjectZ v1.0 · 56 modules loaded"},
+    {c:"t-ok",t:"[+] dns: A 93.184.216.34 · MX · TXT"},
+    {c:"t-ok",t:"[+] ssl: grade A+ · expires 2025-12-31"},
+    {c:"t-warn",t:"[!] headers: grade F · missing CSP, HSTS"},
+    {c:"t-ok",t:"[+] waf: Cloudflare detected (91%)"},
+    {c:"t-dim",t:"[*] risk 50/100 · results saved"},
+  ]},
+  {lbl:"fiveeyes check",cmd:"python3 projectz.py apache fiveeyes --no-cache",lines:[
+    {c:"t-ok",t:"[*] six-nation threat check: apache"},
+    {c:"t-warn",t:"[!] CISA KEV: 42 matches"},
+    {c:"t-ok",t:"[+] CERT-In India: 2 vuln notes"},
+    {c:"t-err",t:"[!] ACTIVELY EXPLOITED · score 85/100"},
+    {c:"t-ok",t:"[+] CVEs referenced: 47"},
+    {c:"t-dim",t:"[*] nations matched: 3 / 6"},
+  ]},
+  {lbl:"bug bounty",cmd:"python3 projectz.py example.com --profile bug_bounty -f html",lines:[
+    {c:"t-ok",t:"[*] profile: bug_bounty · 22 modules"},
+    {c:"t-warn",t:"[!] cors: misconfiguration (CRITICAL)"},
+    {c:"t-warn",t:"[!] s3buckets: 1 public bucket"},
+    {c:"t-ok",t:"[+] subdomains: 31 found"},
+    {c:"t-dim",t:"[*] report saved: example_com_report.html"},
+  ]},
+];
+
+let selCat=null,dIdx=0,dTimer=null,tTimer=null;
+
+function initCats(){
+  const g=document.getElementById('cat-grid');
+  CATS.forEach((c,i)=>{
+    const d=document.createElement('div');d.className='cat';
+    d.innerHTML=`<div class="cat-icon"><i class="ti ${c.icon}"></i></div><div class="cat-name">${c.name}</div><div class="cat-sub">${c.sub}</div>`;
+    d.onclick=()=>{
+      const panel=document.getElementById('mod-panel');
+      if(selCat===i){selCat=null;d.classList.remove('sel');panel.style.display='none';return;}
+      document.querySelectorAll('.cat').forEach(x=>x.classList.remove('sel'));
+      selCat=i;d.classList.add('sel');panel.style.display='block';
+      document.getElementById('mp-title').textContent=c.name+' — click a module to use in command builder';
+      const ch=document.getElementById('chips');ch.innerHTML='';
+      c.mods.forEach(m=>{
+        const s=document.createElement('span');s.className='chip';s.textContent=m;
+        s.onclick=()=>{
+          document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+          s.classList.add('active');
+          document.getElementById('sel-m').value=m;
+          document.getElementById('sel-p').value='';
+          build();
+          stopDemo();showDemo({lbl:m,cmd:`python3 projectz.py example.com ${m} --no-cache`,lines:[
+            {c:"t-ok",t:`[*] module: ${m} · group: ${c.name}`},
+            {c:"t-ok",t:"[*] async engine started"},
+            {c:"t-ok",t:"[+] target: example.com"},
+            {c:"t-dim",t:"[*] complete — use -f html for full report"},
+          ]});
+        };
+        ch.appendChild(s);
+      });
+    };
+    g.appendChild(d);
+  });
+}
+
+function initNations(){
+  const g=document.getElementById('nations-grid');
+  NATIONS.forEach(n=>{
+    const d=document.createElement('div');d.className='nation';
+    d.innerHTML=`<div class="nflag">${n.flag}</div><div class="nname">${n.name} · ${n.agency}</div><div class="nagency">${n.feed}</div><div class="nfeed">free · no key</div>`;
+    g.appendChild(d);
+  });
+}
+
+function initProfiles(){
+  const g=document.getElementById('prof-grid');
+  PROFILES.forEach(p=>{
+    const d=document.createElement('div');d.className='prof';
+    d.innerHTML=`<div class="prof-name">--profile ${p.n}</div><div class="prof-desc">${p.d}</div><div class="prof-n">${p.m} modules</div>`;
+    d.onclick=()=>{
+      document.querySelectorAll('.prof').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');
+      document.getElementById('sel-p').value=p.n;
+      document.getElementById('sel-m').value='quick';
+      build();
+      const t=document.getElementById('sel-t').value;
+      stopDemo();showDemo({lbl:p.n,cmd:`python3 projectz.py ${t} --profile ${p.n}`,lines:[
+        {c:"t-ok",t:`[*] profile: ${p.n} · ${p.m} modules`},
+        {c:"t-dim",t:`[*] ${p.d}`},
+        {c:"t-ok",t:"[*] async engine · all modules queued"},
+        {c:"t-dim",t:"[*] results saved to projectz.db"},
+      ]});
+    };
+    g.appendChild(d);
+  });
+}
+
+function profPick(){
+  const v=document.getElementById('sel-p').value;
+  if(v)document.getElementById('sel-m').value='quick';
+  document.querySelectorAll('.prof').forEach(x=>x.classList.remove('sel'));
+  build();
+}
+
+function build(){
+  const t=document.getElementById('sel-t').value;
+  const m=document.getElementById('sel-m').value;
+  const p=document.getElementById('sel-p').value;
+  const o=document.getElementById('sel-o').value;
+  const f=document.getElementById('sel-f').value;
+  let cmd='python3 projectz.py '+t;
+  if(p)cmd+=' --profile '+p;
+  else if(m)cmd+=' '+m;
+  if(o)cmd+=' '+o;
+  if(f)cmd+=' '+f;
+  document.getElementById('cmd-out').textContent=cmd;
+}
+
+function cp(btn){
+  navigator.clipboard.writeText(document.getElementById('cmd-out').textContent).catch(()=>{});
+  btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1400);
+}
+
+function stopDemo(){clearTimeout(dTimer);clearTimeout(tTimer);}
+
+function showDemo(demo){
+  document.getElementById('term-lbl').textContent=demo.lbl+' — bash';
+  const body=document.getElementById('term-body');
+  body.innerHTML='';
+  const cmdRow=document.createElement('div');cmdRow.className='tl';
+  cmdRow.innerHTML='<span class="t-p">$ </span><span class="t-c" id="tc"></span><span class="cur" id="cur"></span>';
+  body.appendChild(cmdRow);
+  const tc=cmdRow.querySelector('#tc'),cur=cmdRow.querySelector('#cur');
+  let i=0;
+  function type(){
+    if(i<demo.cmd.length){tc.textContent+=demo.cmd[i++];tTimer=setTimeout(type,14);}
+    else{
+      cur.remove();
+      demo.lines.forEach((l,idx)=>{
+        setTimeout(()=>{
+          const r=document.createElement('div');r.className='tl';
+          r.innerHTML=`<span class="${l.c}">${l.t}</span>`;
+          body.appendChild(r);
+        },(idx+1)*260);
+      });
+    }
+  }
+  type();
+}
+
+function autoCycle(){
+  showDemo(DEMOS[dIdx%DEMOS.length]);dIdx++;
+  dTimer=setTimeout(autoCycle,5500);
+}
+
+initCats();initNations();initProfiles();build();
+setTimeout(autoCycle,200);
+</script>
+</body>
+</html>

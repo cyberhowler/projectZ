@@ -1,0 +1,49 @@
+# ProjectZ v1.0 — Python Dependencies
+# Install: pip install -r requirements.txt
+# Python 3.10+ required
+
+# ── Core async & HTTP ─────────────────────────────────────────────────────
+aiohttp>=3.9.0
+aiohttp[speedups]>=3.9.0
+requests>=2.31.0
+httpx>=0.26.0
+
+# ── CLI & display ─────────────────────────────────────────────────────────
+click>=8.1.7
+colorama>=0.4.6
+tabulate>=0.9.0
+rich>=13.7.0
+tqdm>=4.66.1
+
+# ── Config & templating ───────────────────────────────────────────────────
+python-dotenv>=1.0.0
+jinja2>=3.1.2
+
+# ── DNS & networking ──────────────────────────────────────────────────────
+dnspython>=2.4.2
+netaddr>=0.10.1
+
+# ── HTML parsing ──────────────────────────────────────────────────────────
+beautifulsoup4>=4.12.2
+lxml>=5.1.0
+
+# ── Crypto & SSL ──────────────────────────────────────────────────────────
+cryptography>=41.0.0
+pyOpenSSL>=23.3.0
+
+# ── Database ──────────────────────────────────────────────────────────────
+aiosqlite>=0.19.0
+
+# ── Notifications ────────────────────────────────────────────────────────
+slack-sdk>=3.26.0
+
+# ── Optional: boosts results if installed ────────────────────────────────
+# python-whois>=0.9.4        # better WHOIS parsing
+# shodan>=1.31.0             # official Shodan client
+# censys>=2.2.9              # official Censys client
+# yara-python>=4.3.1         # YARA rule scanning
+# pandas>=2.1.0              # CSV export (fallback built-in)
+
+# ── Dev / Testing ────────────────────────────────────────────────────────
+pytest>=7.4.0
+pytest-asyncio>=0.23.0

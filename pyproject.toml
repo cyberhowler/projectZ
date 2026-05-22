@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "projectz"
+version = "1.0.1"
+description = "OSINT & Pentest Recon Framework — 53 Modules, Zero Paid APIs"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+keywords = ["osint", "recon", "security", "pentest", "cybersec"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+]
+dependencies = [
+    "aiohttp>=3.9.0",
+    "requests>=2.31.0",
+    "httpx>=0.26.0",
+    "beautifulsoup4>=4.12.2",
+    "lxml>=5.1.0",
+    "rich>=13.7.0",
+    "click>=8.1.7",
+    "python-dotenv>=1.0.0",
+    "jinja2>=3.1.2",
+    "dnspython>=2.4.2",
+    "netaddr>=0.10.1",
+    "colorama>=0.4.6",
+    "tqdm>=4.66.1",
+    "tabulate>=0.9.0",
+    "cryptography>=41.0.0",
+    "pyOpenSSL>=23.3.0",
+    "aiosqlite>=0.19.0",
+    "slack-sdk>=3.26.0",
+]
+
+[project.scripts]
+projectz = "src.core.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/cyberhowler/projectZ"
+Documentation = "https://github.com/cyberhowler/projectZ#readme"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

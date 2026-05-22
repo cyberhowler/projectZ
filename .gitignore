@@ -1,0 +1,57 @@
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+
+# ── Virtual environments ──────────────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── ProjectZ runtime data (never commit) ─────────────────────────────────
+data/db/
+data/results/
+data/logs/
+data/cache/dns/
+data/cache/whois/
+data/cache/google/
+data/cache/crtsh/
+data/cache/
+logs/
+logs/scans/
+
+# ── Secrets ───────────────────────────────────────────────────────────────
+.env
+*.key
+*.pem
+secrets.json
+*.pyc
+
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ───────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*~
+
+# ── Testing ───────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Keep empty dirs via .gitkeep ─────────────────────────────────────────
+!data/db/.gitkeep
+!data/results/.gitkeep
+!data/cache/.gitkeep
+!data/logs/.gitkeep
+!data/profiles/.gitkeep
+!logs/scans/.gitkeep
